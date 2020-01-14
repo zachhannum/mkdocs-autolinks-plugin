@@ -1,34 +1,28 @@
 # MkDocs Autolinks Plugin
 
-* * *
-
-*An MkDocs plugin that simplifies relative linking between documents.*
+An MkDocs plugin that simplifies relative linking between documents.
 
 The Autolinks plugins allows you to link to pages and images within your MkDocs site without provided the entire relative path to the file in your document structure.
 
-## Installation
+## Setup 
 
-* * *
+Install the plugin using pip:
 
-Install the package with pip:
+`pip install mkdocs-autolinks-plugin`
 
-```sh
-cd mkdocs-autolinks-plugin
-pip install .
-```
-
-Enable the plugin in your `mkdocs.yml`:
-
+Activate the plugin in `mkdocs.yml`:
 ```yaml
 plugins:
-	- autolinks
+  - search
+  - autolinks 
 ```
 
-More information about plugins in the [MkDocs documentation](https://www.mkdocs.org/user-guide/plugins/).
+> **Note:** If you have no `plugins` entry in your config file yet, you'll likely also want to add the `search` plugin. MkDocs enables it by default if there is no `plugins` entry set, but now you have to enable it explicitly.
+
+More information about plugins in the [MkDocs documentation][mkdocs-plugins].
+
 
 ## Usage
-
-* * *
 
 To use this plugin, simply create a link that only contains the filename of file you wish to link to.
 
@@ -41,7 +35,7 @@ docs/
 │   └── syntax_guide.md
 ├── software/
 │   ├── git_flow.md
-│   └── qnx.md
+│   └── code_reviews.md
 └── images/
     ├── avatar.png
     └── example.jpg
