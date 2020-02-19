@@ -2,7 +2,15 @@ import re
 import os
 from mkdocs.plugins import BasePlugin
 
-AUTOLINK_RE = r'\[([^\]]+)\]\(([^)/]+\.(md|png|jpg))\)'
+# For Regex, match groups are:
+#       0: Whole markdown link e.g. [Alt-text](url)
+#       1: Alt text
+#       2: Full URL e.g. url + hash anchor
+#       3: Filename e.g. filename.md
+#       4: File extension e.g. .md, .png, etc.
+#       5. hash anchor e.g. #my-sub-heading-link
+
+AUTOLINK_RE = r'\[([^\]]+)\]\((([^)/]+\.(md|png|jpg))(#.*)*)\)'
 # (?<!```\n)\[([^\]]+)\]\(([^)/]+\.md)\)
 class AutoLinkReplacer:
     def __init__(self, base_docs_url, page_url):
@@ -11,7 +19,7 @@ class AutoLinkReplacer:
 
     def __call__(self, match):
         # Name of the markdown file
-        filename = match.group(2).strip()
+        filename = match.group(3).strip()
 
         # Absolute URL of the linker
         abs_linker_url = os.path.dirname(os.path.join(self.base_docs_url, self.page_url))
@@ -32,7 +40,10 @@ class AutoLinkReplacer:
             return match.group(0)
 
         # Construct the return link by replacing the filename with the relative path to the file
-        link = match.group(0).replace(match.group(2), rel_link_url)
+        if(match.group(5) == None):
+            link = match.group(0).replace(match.group(2), rel_link_url)
+        else:
+            link = match.group(0).replace(match.group(2), rel_link_url + match.group(5))
 
         return link
 
