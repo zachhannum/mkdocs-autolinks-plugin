@@ -1,3 +1,7 @@
+"""
+An MkDocs plugin that simplifies relative linking between documents.
+"""
+
 import re
 import os
 from mkdocs.plugins import BasePlugin
@@ -11,8 +15,11 @@ from mkdocs.plugins import BasePlugin
 #       5. hash anchor e.g. #my-sub-heading-link
 
 AUTOLINK_RE = r'\[([^\]]+)\]\((([^)/]+\.(md|png|jpg))(#.*)*)\)'
-# (?<!```\n)\[([^\]]+)\]\(([^)/]+\.md)\)
+
 class AutoLinkReplacer:
+    """
+    Implements logic to replace URLs via RegEx.
+    """
     def __init__(self, base_docs_url, page_url):
         self.base_docs_url = base_docs_url
         self.page_url = page_url
@@ -40,7 +47,7 @@ class AutoLinkReplacer:
             return match.group(0)
 
         # Construct the return link by replacing the filename with the relative path to the file
-        if(match.group(5) == None):
+        if match.group(5) is None:
             link = match.group(0).replace(match.group(2), rel_link_url)
         else:
             link = match.group(0).replace(match.group(2), rel_link_url + match.group(5))
@@ -48,7 +55,9 @@ class AutoLinkReplacer:
         return link
 
 class AutoLinksPlugin(BasePlugin):
-
+    """
+    Extends base plugin.
+    """
     def on_page_markdown(self, markdown, page, config, site_navigation=None, **kwargs):
 
         # Getting the root location of markdown source files
@@ -59,5 +68,7 @@ class AutoLinksPlugin(BasePlugin):
 
         # Look for matches and replace
         markdown = re.sub(AUTOLINK_RE, AutoLinkReplacer(base_docs_url, page_url), markdown)
+
+        _ = (kwargs)
 
         return markdown
