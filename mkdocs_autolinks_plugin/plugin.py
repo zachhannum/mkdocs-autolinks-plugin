@@ -16,7 +16,7 @@ from mkdocs.plugins import BasePlugin
 
 AUTOLINK_RE = r'\[([^\]]+)\]\((([^)/]+\.(md|png|jpg))(#.*)*)\)'
 
-class AutoLinkReplacer:
+class AutoLinkReplacer: # pylint: disable=too-few-public-methods
     """
     Implements logic to replace URLs via RegEx.
     """
@@ -35,6 +35,7 @@ class AutoLinkReplacer:
         rel_link_url = ''
         # Walk through all files in docs directory to find a matching file
         for root, dirs, files in os.walk(self.base_docs_url):
+            _ = (dirs)
             for name in files:
                 # If we have a match, create the relative path from linker to the link
                 if name == filename:
@@ -69,6 +70,6 @@ class AutoLinksPlugin(BasePlugin):
         # Look for matches and replace
         markdown = re.sub(AUTOLINK_RE, AutoLinkReplacer(base_docs_url, page_url), markdown)
 
-        _ = (kwargs)
+        _ = (site_navigation, kwargs)
 
         return markdown
