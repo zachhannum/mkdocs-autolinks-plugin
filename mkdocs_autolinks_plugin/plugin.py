@@ -42,9 +42,11 @@ class AutoLinkReplacer: # pylint: disable=too-few-public-methods
                     # Absolute path to the file we want to link to
                     abs_link_url = os.path.dirname(os.path.join(root, name))
                     # Constructing relative path from the linker to the link
-                    rel_link_url = os.path.join(os.path.relpath(abs_link_url, abs_linker_url), filename)
+                    rel_link_url = os.path.join(os.path.relpath(abs_link_url, abs_linker_url), 
+                                                filename)
         if rel_link_url == '':
-            print('WARNING: AutoLinksPlugin unable to find ' + filename + ' in directory ' + self.base_docs_url)
+            print('WARNING: AutoLinksPlugin unable to find ' + filename + ' in directory ' \
+                  + self.base_docs_url)
             return match.group(0)
 
         # Construct the return link by replacing the filename with the relative path to the file
@@ -59,8 +61,8 @@ class AutoLinksPlugin(BasePlugin):
     """
     Extends base plugin.
     """
+    @staticmethod
     def on_page_markdown(self, markdown, page, config, site_navigation=None, **kwargs):
-
         # Getting the root location of markdown source files
         base_docs_url = config["docs_dir"]
 
