@@ -1,65 +1,37 @@
-# MkDocs Autolinks Plugin
+# MkDocs Roamlinks Plugin
 
-An MkDocs plugin that simplifies relative linking between documents.
-
-The Autolinks plugins allows you to link to pages and images within your MkDocs site without provided the entire relative path to the file in your document structure.
+An MkDocs plugin that simplifies relative linking between documents and convert roamlinks .
 
 ## Setup 
 
 Install the plugin using pip:
 
-`pip install mkdocs-autolinks-plugin`
+`pip install mkdocs-roamlinks-plugin`
 
 Activate the plugin in `mkdocs.yml`:
 ```yaml
 plugins:
   - search
-  - autolinks 
+  - roamlinks 
 ```
-
-> **Note:** If you have no `plugins` entry in your config file yet, you'll likely also want to add the `search` plugin. MkDocs enables it by default if there is no `plugins` entry set, but now you have to enable it explicitly.
-
-More information about plugins in the [MkDocs documentation][mkdocs-plugins].
-
 
 ## Usage
 
 To use this plugin, simply create a link that only contains the filename of file you wish to link to.
 
-For example, say you have a document structure like this:
+| origin                  | convert                             |
+| ----------------------- | ----------------------------------- |
+| `[Git Flow](git_flow.md)` | `[Git Flow](../software/git_flow.md)` |
+| [[Git Flow]]            | `[Git Flow](../software/git_flow.md)` |
+| ![[image.png]]           | `![image.png](../image/imag.png)`      |
+[[#Heading identifiers]] | `[Heading identifiers in HTML](#heading-identifiers-in-html)`
 
-```
-docs/
-├── guides/
-│   ├── onboarding.md
-│   └── syntax_guide.md
-├── software/
-│   ├── git_flow.md
-│   └── code_reviews.md
-└── images/
-    ├── avatar.png
-    └── example.jpg
-```
+## Known issues
+roamlinks don't support ` [[Git Flow#Heading]]`
 
-Normally, if you want create a link to `git_flow.md` from inside `onboarding.md`, you would need to provide the relative path:
+| origin                  | convert                             |
+| ----------------------- | ----------------------------------- |
+ [[Git Flow#Heading\| Alias]] | `[Alias](../software/git_flow.md#heading)` |
 
-```markdown
-# onboarding.md
-[Git Flow](../software/git_flow.md)
-```
-
-This link is fragile; if someone decides to rearrange the site structure, all of these relative links break. Not to mention having to figure out the relative path.
-
-With the Autolinks plugin, you simply need to provide the filename you wish to link to. The plugin will pre-process all of your markdown files and replace the filename with the correct relative path, given that the file exists in your document structure:
-
-```markdown
-# onboarding.md
-[Git Flow](git_flow.md)
-```
-
-The Autolinks plugin also works with `jpg` and `png` files:
-
-```markdown
-# onboarding.md
-![Avatar](avatar.png)
-```
+1. mkdocs heading have problem with Chinese, show `#_1`
+2. somehow I format to `[Alias](../software/git_flow.md/#heading)` bug mkdocs won't change it to `https://xx/git_flow/#heading` , strip(".md")

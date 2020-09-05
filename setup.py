@@ -1,17 +1,17 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='mkdocs-autolinks-plugin',
-    version='0.2.0',
+    name='mkdocs-roamlinks-plugin',
+    version='0.1.0',
     description='An MkDocs plugin',
-    long_description='An MkDocs plugin that automagically generates relative links between markdown pages',
+    long_description='An MkDocs plugin that automagically generates relative links and convert roamlike links between markdown pages',
     keywords='mkdocs',
-    url='https://github.com/midnightprioriem/mkdocs-autolinks-plugin',
-    download_url='https://github.com/midnightprioriem/mkdocs-autolinks-plugin/archive/v_020.tar.gz',
-    author='Zach Hannum',
-    author_email='zacharyhannum@gmail.com',
+    url= 'https://github.com/Jackiexiao/mkdocs-roamlinks-plugin',
+    #download_url='https://github.com/midnightprioriem/mkdocs-autolinks-plugin/archive/v_020.tar.gz',
+    author='jackiexiao',
+    author_email='707610215@qq.com',
     license='MIT',
-    python_requires='>=2.7',
+    python_requires='>=3.7',
     install_requires=[
         'mkdocs>=1.0.4',
     ],
@@ -30,7 +30,7 @@ setup(
     packages=find_packages(),
     entry_points={
         'mkdocs.plugins': [
-            'autolinks = mkdocs_autolinks_plugin.plugin:AutoLinksPlugin',
+            'roamlinks = mkdocs_roamlinks_plugin.plugin:RoamLinksPlugin',
         ]
     }
 )
