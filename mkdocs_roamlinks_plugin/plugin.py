@@ -81,7 +81,7 @@ class RoamLinkReplacer:
             title = re.sub(r' +', "-", title)
             return title
         else:
-            return None
+            return ""
 
     def __call__(self, match):
         # Name of the markdown file
@@ -90,7 +90,7 @@ class RoamLinkReplacer:
         title = match.group(3).strip() if match.group(3) else ""
         format_title = self.gfm_anchor(title)
         alias = match.group(4).strip('|') if match.group(4) else ""
-        # print(f'--debug: link: {whole_link}, filename:{filename}, title: {title}, format_title: {format_title} alias:{alias}  ')
+        print(f'--debug: link: {whole_link}, filename:{filename}, title: {title}, format_title: {format_title} alias:{alias}  ')
 
         # Absolute URL of the linker
         abs_linker_url = os.path.dirname(
