@@ -22,12 +22,7 @@ To use this plugin, simply create a link that only contains the filename of file
 | origin                  | convert                             |
 | ----------------------- | ----------------------------------- |
 | `[Git Flow](git_flow.md)` | `[Git Flow](../software/git_flow.md)` |
-| [[Git Flow]]            | `[Git Flow](../software/git_flow.md)` |
-| ![[image.png]]           | `![image.png](../image/imag.png)`      |
-[[#Heading identifiers]] | `[Heading identifiers in HTML](#heading-identifiers-in-html)`
-
-## Known issues
-roamlinks don't support ` [[Git Flow#Heading]]` -> `[Git Flow](../software/git_flow.md#heading)`
-
-1. mkdocs heading have problem with Chinese, show `#_1`
-2. somehow I format to `[Alias](../software/git_flow.md/#heading)` bug mkdocs won't change it to `https://xx/git_flow/#heading` , strip(".md")
+| `[[Git Flow]]`            | `[Git Flow](../software/git_flow.md)` |
+| `![[image.png]]`           | `![image.png](../image/imag.png)`      |
+| `[[#Heading identifiers]]` | `[Heading identifiers in HTML](#heading-identifiers-in-html)`|
+| `[[Git Flow#Heading]]`     |  `[Git Flow](../software/git_flow.md#heading)` |

@@ -90,7 +90,7 @@ class RoamLinkReplacer:
         title = match.group(3).strip() if match.group(3) else ""
         format_title = self.gfm_anchor(title)
         alias = match.group(4).strip('|') if match.group(4) else ""
-        print(f'--debug: link: {whole_link}, filename:{filename}, title: {title}, format_title: {format_title} alias:{alias}  ')
+        # print(f'--debug: link: {whole_link}, filename:{filename}, title: {title}, format_title: {format_title} alias:{alias}  ')
 
         # Absolute URL of the linker
         abs_linker_url = os.path.dirname(
@@ -109,14 +109,12 @@ class RoamLinkReplacer:
                         abs_link_url = os.path.dirname(os.path.join(
                             root, name))
                         # Constructing relative path from the linker to the link
+                        rel_link_url = os.path.join(
+                                os.path.relpath(abs_link_url, abs_linker_url), name)
                         if title:
-                            rel_link_url = os.path.join(
-                                os.path.relpath(abs_link_url, abs_linker_url),
-                                name.replace('.md', ''), '#' + format_title)
-                        else:
-                            rel_link_url = os.path.join(
-                                os.path.relpath(abs_link_url, abs_linker_url),
-                                name)
+                            rel_link_url = rel_link_url + '#' + format_title
+                            # 但这个在处理index.md标题或者是被用作子文件夹默认主页的标题
+                            #会存在问题，因为这2种情况下网址格式跟普通的不一样
             if rel_link_url == '':
                 print('WARNING: RoamLinksPlugin unable to find ' + filename +
                       ' in directory ' + self.base_docs_url)
@@ -132,7 +130,10 @@ class RoamLinkReplacer:
             else:
                 link = f'[{filename+title}]({rel_link_url})'
         else:
-            link = f'[{title}]({rel_link_url})'
+            if alias:
+                link = f'[{alias}]({rel_link_url})'
+            else:
+                link = f'[{title}]({rel_link_url})'
 
         return link
 
