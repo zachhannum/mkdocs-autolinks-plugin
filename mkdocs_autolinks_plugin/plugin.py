@@ -1,5 +1,7 @@
 import re
 import os
+from urllib.parse import quote
+
 from mkdocs.plugins import BasePlugin
 
 # For Regex, match groups are:
@@ -39,6 +41,7 @@ class AutoLinkReplacer:
             print('WARNING: AutoLinksPlugin unable to find ' + filename + ' in directory ' + self.base_docs_url)
             return match.group(0)
 
+        rel_link_url = quote(rel_link_url)
         # Construct the return link by replacing the filename with the relative path to the file
         if(match.group(5) == None):
             link = match.group(0).replace(match.group(2), rel_link_url)
