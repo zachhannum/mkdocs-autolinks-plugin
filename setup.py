@@ -2,12 +2,12 @@ from setuptools import setup, find_packages
 
 setup(
     name='mkdocs-autolinks-plugin',
-    version='0.2.1',
+    version='0.3.0',
     description='An MkDocs plugin',
     long_description='An MkDocs plugin that automagically generates relative links between markdown pages',
     keywords='mkdocs',
     url='https://github.com/midnightprioriem/mkdocs-autolinks-plugin',
-    download_url='https://github.com/midnightprioriem/mkdocs-autolinks-plugin/archive/v_021.tar.gz',
+    download_url='https://github.com/midnightprioriem/mkdocs-autolinks-plugin/archive/v_030.tar.gz',
     author='Zach Hannum',
     author_email='zacharyhannum@gmail.com',
     license='MIT',
