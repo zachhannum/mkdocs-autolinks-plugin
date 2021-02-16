@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='mkdocs-autolinks-plugin',
-    version='0.2.0',
+    version='0.2.1',
     description='An MkDocs plugin',
     long_description='An MkDocs plugin that automagically generates relative links between markdown pages',
     keywords='mkdocs',
