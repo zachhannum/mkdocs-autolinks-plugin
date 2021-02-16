@@ -7,7 +7,7 @@ setup(
     long_description='An MkDocs plugin that automagically generates relative links between markdown pages',
     keywords='mkdocs',
     url='https://github.com/midnightprioriem/mkdocs-autolinks-plugin',
-    download_url='https://github.com/midnightprioriem/mkdocs-autolinks-plugin/archive/v_020.tar.gz',
+    download_url='https://github.com/midnightprioriem/mkdocs-autolinks-plugin/archive/v_021.tar.gz',
     author='Zach Hannum',
     author_email='zacharyhannum@gmail.com',
     license='MIT',
