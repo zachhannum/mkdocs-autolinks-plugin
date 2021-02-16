@@ -12,7 +12,7 @@ from mkdocs.plugins import BasePlugin
 #       4: File extension e.g. .md, .png, etc.
 #       5. hash anchor e.g. #my-sub-heading-link
 
-AUTOLINK_RE = r'(?:\!\[\]|\[([^\]]+)\])\((([^)/]+\.(md|png|jpg|jpeg|bmp|gif))(#.*)*)\)"
+AUTOLINK_RE = r'(?:\!\[\]|\[([^\]]+)\])\((([^)/]+\.(md|png|jpg|jpeg|bmp|gif))(#.*)*)\)'
 
 class AutoLinkReplacer:
     def __init__(self, base_docs_url, page_url):
