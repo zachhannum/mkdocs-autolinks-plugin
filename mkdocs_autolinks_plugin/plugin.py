@@ -15,47 +15,47 @@ from mkdocs.plugins import BasePlugin
 AUTOLINK_RE = r'(?:\!\[\]|\[([^\]]+)\])\((([^)/]+\.(md|png|jpg|jpeg|bmp|gif))(#.*)*)\)'
 
 class AutoLinkReplacer:
-    def __init__(self, base_docs_url, page_url):
-        self.base_docs_url = base_docs_url
-        self.page_url = page_url
+    def __init__(self, base_docs_dir, page_path):
+        self.base_docs_dir = base_docs_dir
+        self.page_path = page_path
 
     def __call__(self, match):
         # Name of the markdown file
         filename = match.group(3).strip()
 
-        # Absolute URL of the linker
-        abs_linker_url = os.path.dirname(
-            os.path.join(self.base_docs_url, self.page_url)
+        # Absolute path to the directory of the linker
+        abs_linker_dir = os.path.dirname(
+            os.path.join(self.base_docs_dir, self.page_path)
         )
 
-        # Find directory URL to target link
-        rel_link_url = ""
+        # Find the path to the target file
+        rel_link_path = ""
         # Walk through all files in docs directory to find a matching file
-        for root, dirs, files in os.walk(self.base_docs_url):
+        for root, dirs, files in os.walk(self.base_docs_dir):
             for name in files:
                 # If we have a match, create the relative path from linker to the link
                 if name == filename:
-                    # Absolute path to the file we want to link to
-                    abs_link_url = os.path.dirname(os.path.join(root, name))
+                    # Absolute path to the directory of the file we want to link to
+                    abs_link_dir = os.path.dirname(os.path.join(root, name))
                     # Constructing relative path from the linker to the link
-                    rel_link_url = os.path.join(
-                        os.path.relpath(abs_link_url, abs_linker_url), filename
+                    rel_link_path = os.path.join(
+                        os.path.relpath(abs_link_dir, abs_linker_dir), filename
                     )
-        if rel_link_url == "":
+        if rel_link_path == "":
             print(
                 "WARNING: AutoLinksPlugin unable to find "
                 + filename
                 + " in directory "
-                + self.base_docs_url
+                + self.base_docs_dir
             )
             return match.group(0)
 
-        rel_link_url = quote(rel_link_url)
+        rel_link_path = quote(rel_link_path)
         # Construct the return link by replacing the filename with the relative path to the file
         if match.group(5) == None:
-            link = match.group(0).replace(match.group(2), rel_link_url)
+            link = match.group(0).replace(match.group(2), rel_link_path)
         else:
-            link = match.group(0).replace(match.group(2), rel_link_url + match.group(5))
+            link = match.group(0).replace(match.group(2), rel_link_path + match.group(5))
 
         return link
 
@@ -64,14 +64,14 @@ class AutoLinksPlugin(BasePlugin):
     def on_page_markdown(self, markdown, page, config, site_navigation=None, **kwargs):
 
         # Getting the root location of markdown source files
-        base_docs_url = config["docs_dir"]
+        base_docs_dir = config["docs_dir"]
 
-        # Getting the page url that we are linking from
-        page_url = page.file.src_path
+        # Getting the page path that we are linking from
+        page_path = page.file.src_path
 
         # Look for matches and replace
         markdown = re.sub(
-            AUTOLINK_RE, AutoLinkReplacer(base_docs_url, page_url), markdown
+            AUTOLINK_RE, AutoLinkReplacer(base_docs_dir, page_path), markdown
         )
 
         return markdown
