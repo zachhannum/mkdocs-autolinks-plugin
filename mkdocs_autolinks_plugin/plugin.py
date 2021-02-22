@@ -46,13 +46,9 @@ class AutoLinkReplacer:
             return match.group(0)
 
         rel_link_path = quote(os.path.relpath(abs_link_path, abs_linker_dir))
-        # Construct the return link by replacing the filename with the relative path to the file
-        if match.group(5) is None:
-            link = match.group(0).replace(match.group(2), rel_link_path)
-        else:
-            link = match.group(0).replace(match.group(2), rel_link_path + match.group(5))
 
-        return link
+        # Construct the return link by replacing the filename with the relative path to the file
+        return match.group(0).replace(match.group(3), rel_link_path)
 
 
 class AutoLinksPlugin(BasePlugin):
