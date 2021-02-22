@@ -55,7 +55,7 @@ class AutoLinksPlugin(BasePlugin):
     def __init__(self):
         self.filename_to_abs_path = None
 
-    def on_page_markdown(self, markdown, page, config, files, site_navigation=None, **kwargs):
+    def on_page_markdown(self, markdown, page, config, files, **kwargs):
         # Initializes the filename lookiup dict if it hasn't already been initialized
         if self.filename_to_abs_path is None:
             self.init_filename_to_abs_path(files)
