@@ -1,8 +1,14 @@
 import os
 from urllib.parse import quote
 import re
+import logging
 
+from mkdocs.utils import warning_filter
 from mkdocs.plugins import BasePlugin
+
+
+LOG = logging.getLogger("mkdocs.plugins." + __name__)
+LOG.addFilter(warning_filter)
 
 # For Regex, match groups are:
 #       0: Whole markdown link e.g. [Alt-text](url)
@@ -13,6 +19,7 @@ from mkdocs.plugins import BasePlugin
 #       5. hash anchor e.g. #my-sub-heading-link
 
 AUTOLINK_RE = r'(?:\!\[\]|\[([^\]]+)\])\((([^)/]+\.(md|png|jpg|jpeg|bmp|gif))(#.*)*)\)'
+
 
 class AutoLinkReplacer:
     def __init__(self, base_docs_dir, abs_page_path):
@@ -39,11 +46,10 @@ class AutoLinkReplacer:
                     rel_link_path = os.path.relpath(abs_link_path, abs_linker_dir)
 
         if rel_link_path is None:
-            print(
-                "WARNING: AutoLinksPlugin unable to find "
-                + filename
-                + " in directory "
-                + self.base_docs_dir
+            LOG.warning(
+                "AutoLinksPlugin unable to find %s in directory %s",
+                filename,
+                self.base_docs_dir,
             )
             return match.group(0)
 
