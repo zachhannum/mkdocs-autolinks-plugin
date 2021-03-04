@@ -79,14 +79,23 @@ class AutoLinksPlugin(BasePlugin):
         self.filename_to_abs_path = {}
         for file_ in files:
             filename = os.path.basename(file_.abs_src_path)
+            file_ext = filename.split(os.extsep)[-1]
 
             if filename in self.filename_to_abs_path:
-                LOG.warning(
-                    "Duplicate filename: '%s' exists at both '%s' and '%s'",
-                    filename,
-                    file_.abs_src_path,
-                    self.filename_to_abs_path[filename],
-                )
+                if file_ext in ["md", "png", "jpg", "jpeg", "bmp", "gif"]:
+                    LOG.warning(
+                        "AutoLinksPlugin : Duplicate filename: '%s' exists at both '%s' and '%s'",
+                        filename,
+                        file_.abs_src_path,
+                        self.filename_to_abs_path[filename],
+                    )
+                else:
+                    LOG.debug(
+                        "AutoLinksPlugin : Duplicate filename: '%s' exists at both '%s' and '%s'",
+                        filename,
+                        file_.abs_src_path,
+                        self.filename_to_abs_path[filename],
+                    )
                 continue
 
             self.filename_to_abs_path[filename] = file_.abs_src_path
