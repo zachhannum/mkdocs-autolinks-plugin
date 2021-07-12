@@ -2,6 +2,7 @@ import os
 from urllib.parse import quote
 import re
 import logging
+from bs4 import BeautifulSoup
 
 from mkdocs.utils import warning_filter
 from mkdocs.plugins import BasePlugin
@@ -24,14 +25,31 @@ AUTOLINK_RE = (
 )
 
 
+# {'source filename': ['url + hash anchor1', 'url + hash anchor2', ... ], ...}
+_target_anchors_per_file = {}
+
+
 class AutoLinkReplacer:
     def __init__(
-        self, base_docs_dir, abs_page_path, filename_to_abs_path, html_error_if_invalid
+        self,
+        base_docs_dir,
+        abs_page_path,
+        filename_to_abs_path,
+        html_error_if_invalid,
+        warn_not_found_anchors,
     ):
         self.base_docs_dir = base_docs_dir
         self.abs_page_path = abs_page_path
         self.filename_to_abs_path = filename_to_abs_path
         self.html_error_if_invalid = html_error_if_invalid
+        self.warn_not_found_anchors = warn_not_found_anchors
+
+        if self.warn_not_found_anchors:
+            try:
+                self.anchors_list = _target_anchors_per_file[self.abs_page_path]
+            except KeyError:
+                _target_anchors_per_file[self.abs_page_path] = []
+                self.anchors_list = _target_anchors_per_file[self.abs_page_path]
 
     def __call__(self, match):
         # Name of the file
@@ -57,6 +75,11 @@ class AutoLinkReplacer:
 
         rel_link_path = quote(os.path.relpath(abs_link_path, abs_linker_dir))
 
+        # Track hash anchors for warning after the build
+        if self.warn_not_found_anchors:
+            if match.group(5) is not None:
+                self.anchors_list.append(match.group(2))
+
         # Construct the return link by replacing the filename with the relative path to the file
         return match.group(0).replace(match.group(3), rel_link_path)
 
@@ -65,10 +88,14 @@ class AutoLinksPlugin(BasePlugin):
 
     config_scheme = (
         ("html_error_if_invalid", config_options.Type(bool, default=False)),
+        ("warn_not_found_anchors", config_options.Type(bool, default=False)),
     )
 
     def __init__(self):
         self.filename_to_abs_path = None
+
+        # [ 'page.file.abs_src_path + hash anchor, ...]
+        self.existing_anchors = []
 
     def on_page_markdown(self, markdown, page, config, files, **kwargs):
         # Initializes the filename lookiup dict if it hasn't already been initialized
@@ -89,11 +116,36 @@ class AutoLinksPlugin(BasePlugin):
                 abs_page_path,
                 self.filename_to_abs_path,
                 self.config["html_error_if_invalid"],
+                self.config["warn_not_found_anchors"],
             ),
             markdown,
         )
 
         return markdown
+
+    def on_page_content(self, html, page, config, files):
+
+        if self.config["warn_not_found_anchors"]:
+            soup = BeautifulSoup(html, "html.parser")
+            titles = soup.find_all(("h1", "h2", "h3", "h4", "h5"))
+
+            for title in titles:
+                self.existing_anchors.append(
+                    page.file.name + ".md#" + title.attrs["id"]
+                )
+
+        return html
+
+    def on_post_build(self, config):
+
+        if self.config["warn_not_found_anchors"]:
+            for src_filename, hash_targets in _target_anchors_per_file.items():
+
+                for hash_target in hash_targets:
+                    if hash_target not in self.existing_anchors:
+                        LOG.warning(
+                            f"{src_filename} has link to {hash_target} which is not valid"
+                        )
 
     def init_filename_to_abs_path(self, files):
         self.filename_to_abs_path = {}
