@@ -63,3 +63,17 @@ The Autolinks plugin also works with `jpg` and `png` files:
 # onboarding.md
 ![Avatar](avatar.png)
 ```
+
+## Options
+
+### Display error in the html 
+
+If you want that files not found display an error in the html rendered file (i.e. a link of the form `<a href=".">Error : unable to find "file.md"</a>`) you can do :
+
+```yaml
+plugins:
+  - search
+  - autolinks:
+      html_error_if_invalid: true
+```
+in your `mkdocs.yml` file

@@ -5,6 +5,7 @@ import logging
 
 from mkdocs.utils import warning_filter
 from mkdocs.plugins import BasePlugin
+from mkdocs.config import config_options, Config
 
 
 LOG = logging.getLogger("mkdocs.plugins." + __name__)
@@ -18,14 +19,19 @@ LOG.addFilter(warning_filter)
 #       4: File extension e.g. .md, .png, etc.
 #       5. hash anchor e.g. #my-sub-heading-link
 
-AUTOLINK_RE = r'(?:\!\[\]|\[([^\]]+)\])\((([^)/]+\.(md|png|jpg|jpeg|bmp|gif))(#[^)]*)*)\)'
+AUTOLINK_RE = (
+    r"(?:\!\[\]|\[([^\]]+)\])\((([^)/]+\.(md|png|jpg|jpeg|bmp|gif))(#[^)]*)*)\)"
+)
 
 
 class AutoLinkReplacer:
-    def __init__(self, base_docs_dir, abs_page_path, filename_to_abs_path):
+    def __init__(
+        self, base_docs_dir, abs_page_path, filename_to_abs_path, html_error_if_invalid
+    ):
         self.base_docs_dir = base_docs_dir
         self.abs_page_path = abs_page_path
         self.filename_to_abs_path = filename_to_abs_path
+        self.html_error_if_invalid = html_error_if_invalid
 
     def __call__(self, match):
         # Name of the file
@@ -43,6 +49,10 @@ class AutoLinkReplacer:
                 filename,
                 self.base_docs_dir,
             )
+
+            if self.html_error_if_invalid:
+                return f'<a href=".">ERROR : unable to find "{match.group(3)}"</a>'
+
             return match.group(0)
 
         rel_link_path = quote(os.path.relpath(abs_link_path, abs_linker_dir))
@@ -52,6 +62,11 @@ class AutoLinkReplacer:
 
 
 class AutoLinksPlugin(BasePlugin):
+
+    config_scheme = (
+        ("html_error_if_invalid", config_options.Type(bool, default=False)),
+    )
+
     def __init__(self):
         self.filename_to_abs_path = None
 
@@ -69,7 +84,12 @@ class AutoLinksPlugin(BasePlugin):
         # Look for matches and replace
         markdown = re.sub(
             AUTOLINK_RE,
-            AutoLinkReplacer(base_docs_dir, abs_page_path, self.filename_to_abs_path),
+            AutoLinkReplacer(
+                base_docs_dir,
+                abs_page_path,
+                self.filename_to_abs_path,
+                self.config["html_error_if_invalid"],
+            ),
             markdown,
         )
 
