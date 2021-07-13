@@ -127,7 +127,7 @@ class AutoLinksPlugin(BasePlugin):
 
         if self.config["warn_not_found_anchors"]:
             soup = BeautifulSoup(html, "html.parser")
-            titles = soup.find_all(("h1", "h2", "h3", "h4", "h5"))
+            titles = soup.find_all(("h1", "h2", "h3", "h4", "h5", "figure"))
 
             for title in titles:
                 self.existing_anchors.append(
