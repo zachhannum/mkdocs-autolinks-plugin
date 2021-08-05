@@ -1,7 +1,13 @@
+import logging
 import os
 import re
+from urllib.parse import quote
 
 from mkdocs.plugins import BasePlugin
+from mkdocs.utils import warning_filter
+
+LOG = logging.getLogger("mkdocs.plugins." + __name__)
+LOG.addFilter(warning_filter)
 
 # For Regex, match groups are:
 #       0: Whole markdown link e.g. [Alt-text](url)
@@ -11,65 +17,77 @@ from mkdocs.plugins import BasePlugin
 #       4: File extension e.g. .md, .png, etc.
 #       5. hash anchor e.g. #my-sub-heading-link
 
-AUTOLINK_RE = r"\[([^\]]+)\]\((([^)/]+\.(md|png|jpg|jpeg|bmp|gif))(#.*)*)\)"
-# (?<!```\n)\[([^\]]+)\]\(([^)/]+\.md)\)
+AUTOLINK_RE = (
+    r"(?:\!\[\]|\[([^\]]+)\])\((([^)/]+\.(md|png|jpg|jpeg|bmp|gif))(#[^)]*)*)\)"
+)
+
+
 class AutoLinkReplacer:
-    def __init__(self, base_docs_url, page_url):
-        self.base_docs_url = base_docs_url
-        self.page_url = page_url
+    def __init__(self, base_docs_dir, abs_page_path, filename_to_abs_path):
+        self.base_docs_dir = base_docs_dir
+        self.abs_page_path = abs_page_path
+        self.filename_to_abs_path = filename_to_abs_path
 
     def __call__(self, match):
-        # Name of the markdown file
+        # Name of the file
         filename = match.group(3).strip()
 
-        # Absolute URL of the linker
-        abs_linker_url = os.path.dirname(
-            os.path.join(self.base_docs_url, self.page_url)
-        )
+        # Absolute path to the directory of the linker
+        abs_linker_dir = os.path.dirname(self.abs_page_path)
 
-        # Find directory URL to target link
-        rel_link_url = ""
-        # Walk through all files in docs directory to find a matching file
-        for root, dirs, files in os.walk(self.base_docs_url):
-            for name in files:
-                # If we have a match, create the relative path from linker to the link
-                if name == filename:
-                    # Absolute path to the file we want to link to
-                    abs_link_url = os.path.dirname(os.path.join(root, name))
-                    # Constructing relative path from the linker to the link
-                    rel_link_url = os.path.join(
-                        os.path.relpath(abs_link_url, abs_linker_url), filename
-                    )
-        if rel_link_url == "":
-            print(
-                "WARNING: AutoLinksPlugin unable to find "
-                + filename
-                + " in directory "
-                + self.base_docs_url
+        # Look up the filename in the filename to absolute path lookup dict
+        try:
+            abs_link_path = self.filename_to_abs_path[filename]
+        except KeyError:
+            LOG.warning(
+                "AutoLinksPlugin unable to find %s in directory %s",
+                filename,
+                self.base_docs_dir,
             )
             return match.group(0)
 
-        # Construct the return link by replacing the filename with the relative path to the file
-        if match.group(5) == None:
-            link = match.group(0).replace(match.group(2), rel_link_url)
-        else:
-            link = match.group(0).replace(match.group(2), rel_link_url + match.group(5))
+        rel_link_path = quote(os.path.relpath(abs_link_path, abs_linker_dir))
 
-        return link
+        # Construct the return link by replacing the filename with the relative path to the file
+        return match.group(0).replace(match.group(3), rel_link_path)
 
 
 class AutoLinksPlugin(BasePlugin):
-    def on_page_markdown(self, markdown, page, config, site_navigation=None, **kwargs):
+    def __init__(self):
+        self.filename_to_abs_path = None
+
+    def on_page_markdown(self, markdown, page, config, files, **kwargs):
+        # Initializes the filename lookiup dict if it hasn't already been initialized
+        if self.filename_to_abs_path is None:
+            self.init_filename_to_abs_path(files)
 
         # Getting the root location of markdown source files
-        base_docs_url = config["docs_dir"]
+        base_docs_dir = config["docs_dir"]
 
-        # Getting the page url that we are linking from
-        page_url = page.file.src_path
+        # Getting the page path that we are linking from
+        abs_page_path = page.file.abs_src_path
 
         # Look for matches and replace
         markdown = re.sub(
-            AUTOLINK_RE, AutoLinkReplacer(base_docs_url, page_url), markdown
+            AUTOLINK_RE,
+            AutoLinkReplacer(base_docs_dir, abs_page_path, self.filename_to_abs_path),
+            markdown,
         )
 
         return markdown
+
+    def init_filename_to_abs_path(self, files):
+        self.filename_to_abs_path = {}
+        for file_ in files:
+            filename = os.path.basename(file_.abs_src_path)
+
+            if filename in self.filename_to_abs_path:
+                LOG.warning(
+                    "Duplicate filename: '%s' exists at both '%s' and '%s'",
+                    filename,
+                    file_.abs_src_path,
+                    self.filename_to_abs_path[filename],
+                )
+                continue
+
+            self.filename_to_abs_path[filename] = file_.abs_src_path
