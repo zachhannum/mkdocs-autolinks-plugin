@@ -18,7 +18,7 @@ LOG.addFilter(warning_filter)
 #       5. hash anchor e.g. #my-sub-heading-link
 
 AUTOLINK_RE = (
-    r"(?:\!\[\]|\[([^\]]+)\])\((([^)/]+\.(md|png|jpg|jpeg|bmp|gif))(#[^)]*)*)\)"
+    r"(?:\!\[\]|\[([^\]]+)\])\((([^)/]+\.(md|png|jpg|jpeg|bmp|gif|svg))(#[^)]*)*)\)"
 )
 
 
