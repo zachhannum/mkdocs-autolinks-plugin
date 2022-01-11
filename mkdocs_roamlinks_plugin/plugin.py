@@ -1,6 +1,13 @@
 import re
 import os
+import logging
+import urllib.parse
+
 from mkdocs.plugins import BasePlugin
+import mkdocs.utils
+
+log = logging.getLogger(f"mkdocs.plugins.{__name__}")
+log.addFilter(mkdocs.utils.warning_filter)
 
 # For Regex, match groups are:
 #       0: Whole markdown link e.g. [Alt-text](url)
@@ -27,12 +34,12 @@ class AutoLinkReplacer:
 
     def __call__(self, match):
         # Name of the markdown file
-        filename = match.group(3).strip()
+        filename = urllib.parse.unquote(match.group(3).strip())
 
         # Absolute URL of the linker
         abs_linker_url = os.path.dirname(
             os.path.join(self.base_docs_url, self.page_url))
-
+        log.info(filename)
         # Find directory URL to target link
         rel_link_url = ''
         # Walk through all files in docs directory to find a matching file
@@ -47,8 +54,7 @@ class AutoLinkReplacer:
                         os.path.relpath(abs_link_url, abs_linker_url),
                         filename)
         if rel_link_url == '':
-            print('WARNING: AutoLinksPlugin unable to find ' + filename +
-                  ' in directory ' + self.base_docs_url)
+            log.warning(f"AutoLinksPlugin unable to find {filename} in directory {self.base_docs_url}")
             return match.group(0)
 
         # Construct the return link by replacing the filename with the relative path to the file
@@ -57,7 +63,6 @@ class AutoLinkReplacer:
         else:
             link = match.group(0).replace(match.group(2),
                                           rel_link_url + match.group(5))
-
         return link
 
 
@@ -90,7 +95,6 @@ class RoamLinkReplacer:
         title = match.group(3).strip() if match.group(3) else ""
         format_title = self.gfm_anchor(title)
         alias = match.group(4).strip('|') if match.group(4) else ""
-        # print(f'--debug: link: {whole_link}, filename:{filename}, title: {title}, format_title: {format_title} alias:{alias}  ')
 
         # Absolute URL of the linker
         abs_linker_url = os.path.dirname(
@@ -104,7 +108,6 @@ class RoamLinkReplacer:
                 for name in files:
                     # If we have a match, create the relative path from linker to the link
                     if self.simplify(name) == self.simplify(filename):
-                        # if name == filename:
                         # Absolute path to the file we want to link to
                         abs_link_url = os.path.dirname(os.path.join(
                             root, name))
@@ -113,11 +116,8 @@ class RoamLinkReplacer:
                                 os.path.relpath(abs_link_url, abs_linker_url), name)
                         if title:
                             rel_link_url = rel_link_url + '#' + format_title
-                            # 但这个在处理index.md标题或者是被用作子文件夹默认主页的标题
-                            #会存在问题，因为这2种情况下网址格式跟普通的不一样
             if rel_link_url == '':
-                print('WARNING: RoamLinksPlugin unable to find ' + filename +
-                      ' in directory ' + self.base_docs_url)
+                log.warning(f"RoamLinksPlugin unable to find {filename} in directory {self.base_docs_url}")
                 return whole_link
         else:
             rel_link_url = '#' + format_title
