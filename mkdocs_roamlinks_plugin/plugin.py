@@ -39,7 +39,7 @@ class AutoLinkReplacer:
         # Absolute URL of the linker
         abs_linker_url = os.path.dirname(
             os.path.join(self.base_docs_url, self.page_url))
-        log.info(filename)
+
         # Find directory URL to target link
         rel_link_url = ''
         # Walk through all files in docs directory to find a matching file
