@@ -123,6 +123,8 @@ class RoamLinkReplacer:
             rel_link_url = '#' + format_title
 
         # Construct the return link
+        # Windows escapes "\" unintentionally, and it creates incorrect links, so need to replace with "/"
+        rel_link_url = rel_link_url.replace("\\", "/")
 
         if filename:
             if alias:
