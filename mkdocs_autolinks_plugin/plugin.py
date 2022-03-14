@@ -2,6 +2,8 @@ import logging
 import os
 import re
 from urllib.parse import quote
+import logging
+from collections import defaultdict
 
 from mkdocs.plugins import BasePlugin
 from mkdocs.utils import warning_filter
@@ -18,9 +20,8 @@ LOG.addFilter(warning_filter)
 #       5. hash anchor e.g. #my-sub-heading-link
 
 AUTOLINK_RE = (
-    r"(?:\!\[\]|\[([^\]]+)\])\((([^)/]+\.(md|png|jpg|jpeg|bmp|gif|svg))(#[^)]*)*)\)"
+    r"(?:\!\[\]|\[([^\]]+)\])\((([^)/]+\.(md|png|jpg|jpeg|bmp|gif|svg|webp))(#[^)]*)*)\)"
 )
-
 
 class AutoLinkReplacer:
     def __init__(self, base_docs_dir, abs_page_path, filename_to_abs_path):
@@ -35,10 +36,10 @@ class AutoLinkReplacer:
         # Absolute path to the directory of the linker
         abs_linker_dir = os.path.dirname(self.abs_page_path)
 
-        # Look up the filename in the filename to absolute path lookup dict
-        try:
-            abs_link_path = self.filename_to_abs_path[filename]
-        except KeyError:
+        # Check if the filename exists in the filename to abs path lookup defaultdict
+        if filename not in self.filename_to_abs_path:
+            # An if-statement is necessary because self.filename_to_abs_path is a
+            # defaultdict, so the more pythonic try: except: wouldn't work.
             LOG.warning(
                 "AutoLinksPlugin unable to find %s in directory %s",
                 filename,
@@ -46,6 +47,18 @@ class AutoLinkReplacer:
             )
             return match.group(0)
 
+        abs_link_paths = self.filename_to_abs_path[filename]
+
+        # Check for duplicates
+        if len(abs_link_paths) > 1:
+            LOG.warning(
+                "AutoLinksPlugin: Duplicate filename referred to in '%s': '%s' exists at %s",
+                self.abs_page_path,
+                filename,
+                abs_link_paths,
+            )
+
+        abs_link_path = abs_link_paths[0]
         rel_link_path = quote(os.path.relpath(abs_link_path, abs_linker_dir))
 
         # Construct the return link by replacing the filename with the relative path to the file
@@ -77,17 +90,7 @@ class AutoLinksPlugin(BasePlugin):
         return markdown
 
     def init_filename_to_abs_path(self, files):
-        self.filename_to_abs_path = {}
+        self.filename_to_abs_path = defaultdict(list)
         for file_ in files:
             filename = os.path.basename(file_.abs_src_path)
-
-            if filename in self.filename_to_abs_path:
-                LOG.warning(
-                    "Duplicate filename: '%s' exists at both '%s' and '%s'",
-                    filename,
-                    file_.abs_src_path,
-                    self.filename_to_abs_path[filename],
-                )
-                continue
-
-            self.filename_to_abs_path[filename] = file_.abs_src_path
+            self.filename_to_abs_path[filename].append(file_.abs_src_path)
