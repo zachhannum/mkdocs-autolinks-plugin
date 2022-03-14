@@ -1,12 +1,12 @@
+import logging
 import os
-from urllib.parse import quote
 import re
+from urllib.parse import quote
 import logging
 from collections import defaultdict
 
-from mkdocs.utils import warning_filter
 from mkdocs.plugins import BasePlugin
-
+from mkdocs.utils import warning_filter
 
 LOG = logging.getLogger("mkdocs.plugins." + __name__)
 LOG.addFilter(warning_filter)
@@ -19,8 +19,9 @@ LOG.addFilter(warning_filter)
 #       4: File extension e.g. .md, .png, etc.
 #       5. hash anchor e.g. #my-sub-heading-link
 
-AUTOLINK_RE = r'(?:\!\[\]|\[([^\]]+)\])\((([^)/]+\.(md|png|jpg|jpeg|bmp|gif|webp))(#[^)]*)*)\)'
-
+AUTOLINK_RE = (
+    r"(?:\!\[\]|\[([^\]]+)\])\((([^)/]+\.(md|png|jpg|jpeg|bmp|gif|svg|webp))(#[^)]*)*)\)"
+)
 
 class AutoLinkReplacer:
     def __init__(self, base_docs_dir, abs_page_path, filename_to_abs_path):
