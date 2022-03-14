@@ -57,9 +57,13 @@ With the Autolinks plugin, you simply need to provide the filename you wish to l
 [Git Flow](git_flow.md)
 ```
 
-The Autolinks plugin also works with `jpg` and `png` files:
+The Autolinks plugin works with the following extension types:
 
-```markdown
-# onboarding.md
-![Avatar](avatar.png)
-```
+* md
+* png
+* jpg
+* jpeg
+* bmp
+* gif
+* svg
+* webp
