@@ -44,3 +44,4 @@ to [mkdoc material style](https://squidfunk.github.io/mkdocs-material/reference/
 
     something
 ```
+- [ ] `%% comment %%` to `<!-- comment -->`
