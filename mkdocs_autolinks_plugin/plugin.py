@@ -1,5 +1,6 @@
 import logging
 import os
+import pathlib
 import re
 from urllib.parse import quote
 import logging
@@ -60,8 +61,8 @@ class AutoLinkReplacer:
             )
 
         abs_link_path = abs_link_paths[0]
-        rel_link_path = quote(os.path.relpath(abs_link_path, abs_linker_dir))
-
+        rel_link_path = quote(pathlib.PurePath(os.path.relpath(abs_link_path, abs_linker_dir)).as_posix())
+    
         # Construct the return link by replacing the filename with the relative path to the file
         return match.group(0).replace(match.group(3), rel_link_path)
 
