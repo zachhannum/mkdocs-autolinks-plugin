@@ -7,7 +7,7 @@ setup(
     long_description='An MkDocs plugin that automagically generates relative links between markdown pages',
     keywords='mkdocs',
     url='https://github.com/arterm-sedov/mkdocs-autolinks-plugin',
-    download_url='https://github.com/arterm-sedov/mkdocs-autolinks-plugin/archive/mkdocs-autolinks-posix-plugin-0.6.1.tar.gz',
+    download_url='https://github.com/arterm-sedov/mkdocs-autolinks-plugin/releases/download/v_061/mkdocs-autolinks-posix-plugin-0.6.1.tar.gz',
     author='Artem Sedov, forked from Zach Hannum',
     license='MIT',
     python_requires='>=2.7',
