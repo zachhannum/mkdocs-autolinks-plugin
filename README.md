@@ -6,7 +6,9 @@ The Autolinks plugins allows you to link to pages and images within your MkDocs 
 
 This plugin is a fork of https://github.com/zachhannum/mkdocs-autolinks-plugin.
 
-This version adds support POSIX paths introduced in MkDocs 1.4.0.
+This version adds support POSIX paths introduced in MkDocs 1.4.0. 
+
+Original version of Autolinks 0.6.0 was not compatible with MkDocs 1.4.0 under Windows.
 
 ## Setup
 
