@@ -14,7 +14,7 @@ Original version of Autolinks 0.6.0 was not compatible with MkDocs 1.4.0 under W
 
 Install the plugin using pip:
 
-`pip install mkdocs-autolinks-plugin`
+`pip install mkdocs-autolinks-posix-plugin`
 
 Activate the plugin in `mkdocs.yml`:
 ```yaml
