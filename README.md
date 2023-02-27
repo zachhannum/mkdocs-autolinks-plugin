@@ -1,14 +1,20 @@
-# MkDocs Autolinks Plugin
+# MkDocs Autolinks POSIX Plugin
 
 An MkDocs plugin that simplifies relative linking between documents.
 
 The Autolinks plugins allows you to link to pages and images within your MkDocs site without provided the entire relative path to the file in your document structure.
 
-## Setup 
+This plugin is a fork of https://github.com/zachhannum/mkdocs-autolinks-plugin.
+
+This version adds support POSIX paths introduced in MkDocs 1.4.0. 
+
+Original version of Autolinks 0.6.0 was not compatible with MkDocs 1.4.0 under Windows.
+
+## Setup
 
 Install the plugin using pip:
 
-`pip install mkdocs-autolinks-plugin`
+`pip install mkdocs-autolinks-posix-plugin`
 
 Activate the plugin in `mkdocs.yml`:
 ```yaml
@@ -19,7 +25,7 @@ plugins:
 
 > **Note:** If you have no `plugins` entry in your config file yet, you'll likely also want to add the `search` plugin. MkDocs enables it by default if there is no `plugins` entry set, but now you have to enable it explicitly.
 
-More information about plugins in the [MkDocs documentation][mkdocs-plugins].
+More information about plugins in the [MkDocs documentation](https://www.mkdocs.org/dev-guide/plugins/).
 
 
 ## Usage

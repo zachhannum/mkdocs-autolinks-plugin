@@ -1,15 +1,14 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='mkdocs-autolinks-plugin',
-    version='0.6.0',
-    description='An MkDocs plugin',
+    name='mkdocs-autolinks-posix-plugin',
+    version='0.6.1',
+    description='MkDocs Autolinks POSIX plugin',
     long_description='An MkDocs plugin that automagically generates relative links between markdown pages',
     keywords='mkdocs',
-    url='https://github.com/midnightprioriem/mkdocs-autolinks-plugin',
-    download_url='https://github.com/midnightprioriem/mkdocs-autolinks-plugin/archive/v_060.tar.gz',
-    author='Zach Hannum',
-    author_email='zacharyhannum@gmail.com',
+    url='https://github.com/arterm-sedov/mkdocs-autolinks-plugin',
+    download_url='https://github.com/arterm-sedov/mkdocs-autolinks-plugin/releases/download/v_061/mkdocs-autolinks-posix-plugin-0.6.1.tar.gz',
+    author='Arterm Sedov, forked from Zach Hannum',
     license='MIT',
     python_requires='>=2.7',
     install_requires=[
