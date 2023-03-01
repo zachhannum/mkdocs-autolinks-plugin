@@ -78,7 +78,7 @@ class RoamLinkReplacer:
         return re.sub(r"[\-_ ]", "", filename.lower()).replace(".md", "")
 
     def gfm_anchor(self, title):
-        """Convert to gfw title / anchor 
+        """Convert to gfw title / anchor
         see: https://gist.github.com/asabaylus/3071099#gistcomment-1593627"""
         if title:
             title = title.strip().lower()
@@ -146,7 +146,7 @@ class RoamLinkReplacer:
             if alias:
                 link = f'[{alias}]({rel_link_url})'
             else:
-                link = f'[{filename+title}]({rel_link_url})'
+                link = f'[{filename+title}](<{rel_link_url}>)'
         else:
             if alias:
                 link = f'[{alias}]({rel_link_url})'
