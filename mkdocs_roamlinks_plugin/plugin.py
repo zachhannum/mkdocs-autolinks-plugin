@@ -22,14 +22,10 @@ AUTOLINK_RE = r'\[([^\]]+)\]\((([^)/]+\.(md|png|jpg))(#.*)*)\)'
 #       0: Whole roamlike link e.g. [[filename#title|alias|widthxheight]]
 #       1: Filename e.g. filename.md
 #       2: #title
-#       3: title
-#       4: |alias
-#       5: alias
-#       6: |widthxheight
-#       7: width
-#       8: xheight
-#       9: height
-ROAMLINK_RE = r"""\[\[(.*?)(\#(.*?))?(\|([^|\d]+[0-9]*))?(\|(\d+)(x(\d+))?)?\]\]"""
+#       3: alias
+#       4: width
+#       5: height
+ROAMLINK_RE = r"""\[\[(.*?)(\#.*?)?(?:\|([\D][^\|]+[\d]*))?(?:\|(\d+)(?:x(\d+))?)?\]\]"""
 
 class AutoLinkReplacer:
     def __init__(self, base_docs_url, page_url):
@@ -98,9 +94,9 @@ class RoamLinkReplacer:
         filename = match.group(1).strip() if match.group(1) else ""
         title = match.group(2).strip() if match.group(2) else ""
         format_title = self.gfm_anchor(title)
-        alias = match.group(5) if match.group(5) else ""
-        width = match.group(7) if match.group(7) else ""
-        height = match.group(9) if match.group(9) else ""
+        alias = match.group(3) if match.group(3) else ""
+        width = match.group(4) if match.group(4) else ""
+        height = match.group(5) if match.group(5) else ""
 
         # Absolute URL of the linker
         abs_linker_url = os.path.dirname(
