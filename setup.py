@@ -14,6 +14,9 @@ setup(
     install_requires=[
         'mkdocs>=1.0.4',
     ],
+    extras_require={
+        'dev': [ 'pytest']
+    },
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
