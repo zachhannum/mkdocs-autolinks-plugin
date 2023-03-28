@@ -19,13 +19,17 @@ log.addFilter(mkdocs.utils.warning_filter)
 AUTOLINK_RE = r'\[([^\]]+)\]\((([^)/]+\.(md|png|jpg))(#.*)*)\)'
 
 # For Regex, match groups are:
-#       0: Whole roamlike link e.g. [[filename#title|alias]]
-#       1: Whole roamlike link e.g. filename#title|alias
-#       2: filename
-#       3: #title
+#       0: Whole roamlike link e.g. [[filename#title|alias|widthxheight]]
+#       1: Filename e.g. filename.md
+#       2: #title
+#       3: title
 #       4: |alias
-ROAMLINK_RE = r'\[\[(([^\]#\|]*)(#[^\|\]]+)*(\|[^\]]*)*)\]\]'
-
+#       5: alias
+#       6: |widthxheight
+#       7: width
+#       8: xheight
+#       9: height
+ROAMLINK_RE = r"""\[\[(.*?)(\#(.*?))?(\|([^|\d]+[0-9]*))?(\|(\d+)(x(\d+))?)?\]\]"""
 
 class AutoLinkReplacer:
     def __init__(self, base_docs_url, page_url):
@@ -91,10 +95,12 @@ class RoamLinkReplacer:
     def __call__(self, match):
         # Name of the markdown file
         whole_link = match.group(0)
-        filename = match.group(2).strip() if match.group(2) else ""
-        title = match.group(3).strip() if match.group(3) else ""
+        filename = match.group(1).strip() if match.group(1) else ""
+        title = match.group(2).strip() if match.group(2) else ""
         format_title = self.gfm_anchor(title)
-        alias = match.group(4).strip('|') if match.group(4) else ""
+        alias = match.group(5) if match.group(5) else ""
+        width = match.group(7) if match.group(7) else ""
+        height = match.group(9) if match.group(9) else ""
 
         # Absolute URL of the linker
         abs_linker_url = os.path.dirname(
@@ -144,14 +150,21 @@ class RoamLinkReplacer:
 
         if filename:
             if alias:
-                link = f'[{alias}]({rel_link_url})'
+                link = f'[{alias}](<{rel_link_url}>)'
             else:
                 link = f'[{filename+title}](<{rel_link_url}>)'
         else:
             if alias:
-                link = f'[{alias}]({rel_link_url})'
+                link = f'[{alias}](<{rel_link_url}>)'
             else:
-                link = f'[{title}]({rel_link_url})'
+                link = f'[{title}](<{rel_link_url}>)'
+
+        if width and not height:
+            link = f'{link}{{ width="{width}" }}'
+        elif not width and height:
+            link = f'{link}{{ height="{height}" }}'
+        elif width and height:
+            link = f'{link}{{ width="{width}"; height="{height}" }}'
 
         return link
 
