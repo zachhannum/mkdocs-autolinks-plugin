@@ -27,6 +27,7 @@ To use this plugin, simply create a link that only contains the filename of file
 | `![[image.png]]`           | `![image.png](../image/imag.png)`      |
 | `[[#Heading identifiers]]` | `[Heading identifiers in HTML](#heading-identifiers-in-html)`|
 | `[[Git Flow#Heading]]`     |  `[Git Flow](../software/git_flow.md#heading)` |
+| `![[image.png|Description|800x600]]` | `![Description](image.png){ width="600"; height="800" }` |
 
 
 ## TODO
