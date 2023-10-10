@@ -23,6 +23,10 @@ AUTOLINK_RE = (
     r"(?:\!\[\]|\[([^\]]+)\])\((([^)/]+(\.md|\.png|\.jpg|\.jpeg|\.bmp|\.gif|\.svg|\.webp|/))(#[^)]*)*)(\s(\".*\"))*\)"
 )
 
+AUTOLINK_RE_REFLINKS = (
+    r"(?:\[([^\]]+)\])\: (([^)/]+(\.md|\.png|\.jpg|\.jpeg|\.bmp|\.gif|\.svg|\.webp|/))(#[^)]*)*)(\s(\".*\"))*\n"
+)
+
 class AutoLinkReplacer:
     def __init__(self, base_docs_dir, abs_page_path, filename_to_abs_path):
         self.base_docs_dir = base_docs_dir
@@ -83,6 +87,11 @@ class AutoLinksPlugin(BasePlugin):
         # Look for matches and replace
         markdown = re.sub(
             AUTOLINK_RE,
+            AutoLinkReplacer(base_docs_dir, abs_page_path, self.filename_to_abs_path),
+            markdown,
+        )
+        markdown = re.sub(
+            AUTOLINK_RE_REFLINKS,
             AutoLinkReplacer(base_docs_dir, abs_page_path, self.filename_to_abs_path),
             markdown,
         )
