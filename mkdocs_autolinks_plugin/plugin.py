@@ -20,7 +20,11 @@ LOG = logging.getLogger("mkdocs.plugins." + __name__)
 #       6. Image title (in quotation marks)
 
 AUTOLINK_RE = (
-    r"(?:\!\[\]|\[([^\]]+)\])\((([^)/]+\.(md|png|jpg|jpeg|bmp|gif|svg|webp))(#[^)]*)*)(\s(\".*\"))*\)"
+    r"(?:\!\[\]|\[([^\]]+)\])\((([^)/]+(\.md|\.png|\.jpg|\.jpeg|\.bmp|\.gif|\.svg|\.webp|/))(#[^)]*)*)(\s(\".*\"))*\)"
+)
+
+AUTOLINK_RE_REFLINKS = (
+    r"(?:\[([^\]]+)\])\: (([^)/]+(\.md|\.png|\.jpg|\.jpeg|\.bmp|\.gif|\.svg|\.webp|/))(#[^)]*)*)(\s(\".*\"))*\n"
 )
 
 class AutoLinkReplacer:
@@ -86,6 +90,11 @@ class AutoLinksPlugin(BasePlugin):
             AutoLinkReplacer(base_docs_dir, abs_page_path, self.filename_to_abs_path),
             markdown,
         )
+        markdown = re.sub(
+            AUTOLINK_RE_REFLINKS,
+            AutoLinkReplacer(base_docs_dir, abs_page_path, self.filename_to_abs_path),
+            markdown,
+        )
 
         return markdown
 
@@ -93,4 +102,6 @@ class AutoLinksPlugin(BasePlugin):
         self.filename_to_abs_path = defaultdict(list)
         for file_ in files:
             filename = os.path.basename(file_.abs_src_path)
+            if filename == "index.md":
+                filename = os.path.basename(os.path.dirname(file_.abs_src_path)) + "/"
             self.filename_to_abs_path[filename].append(file_.abs_src_path)
